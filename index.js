@@ -28,7 +28,7 @@ app.use("/api", userRoute)
 const mongo = mongoose.connect(process.env.DB_PATH, config.DB_OPTIONS);
 
 mongo.then(() => {
-    console.log("Connected");
+    console.log("Connected to Mongo");
 }).catch(e => {
     console.log(e.message);
 })
