@@ -1,5 +1,6 @@
 let User = require("../models/userModel")
 let UserValidation = require("../utilities/user_validation")
+let jwt = require("../utilities/jwt")
 
 
 
@@ -124,6 +125,33 @@ module.exports.updateUser = (req, res) => {
 
         }
     })
+}
 
-
+module.exports.login = function (req, res) {
+    User.findOne({ username: req.body.username }, function (err, user) {
+        if (err) {
+            res.json({
+                status: "Invalid username!"
+            });
+        }
+        else if (user != null) {
+            if (user.password == req.body.password) {
+                var user_token = jwt.sign(user);
+                res.json({
+                    status: "Successfully logged in!",
+                    token: user_token,
+                })
+            }
+            else {
+                res.json({
+                    status: "Wrong password!"
+                })
+            }
+        }
+        else {
+            res.json({
+                status: "Invalid username!"
+            })
+        }
+    })
 }

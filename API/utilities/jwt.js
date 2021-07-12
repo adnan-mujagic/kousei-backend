@@ -1,9 +1,16 @@
-export default class JWT {
-    static sign(params) {
-        return "I signed jsonwebtoken!";
+let jwt = require("jsonwebtoken");
+
+class JWT {
+    static sign(user) {
+        return jwt.sign({
+            uid: user._id,
+            role: user.role
+        }, process.env.JWT_KEY);
     }
 
-    static verify(params) {
-        return "I verified jsonwebtoken!";
+    static verify(token) {
+        return jwt.verify(token);
     }
 }
+
+module.exports = JWT

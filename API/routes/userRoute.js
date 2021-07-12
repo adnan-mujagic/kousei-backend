@@ -12,6 +12,9 @@ router.route("/users")
     .get(userController.getUsers)
     .post(userController.register);
 
+router.route("/users/login")
+    .post(userController.login)
+
 router.route("/users/:user_id")
     .get(userController.getSpecificUser)
     .delete(userController.deleteSpecificUser)
