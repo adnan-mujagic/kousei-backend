@@ -7,6 +7,7 @@ require("dotenv").config();
 
 // Import routes here!
 let userRoute = require("./API/routes/userRoute.js")
+let postRoute = require("./API/routes/postRoute")
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.json())
 
 // Here we will add all the routes!
 app.use("/api", userRoute)
+app.use("/api", postRoute)
 
 const mongo = mongoose.connect(process.env.DB_PATH, config.DB_OPTIONS);
 

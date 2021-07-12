@@ -1,4 +1,5 @@
 let User = require("../models/userModel")
+let Post = require("../models/postModel")
 let UserValidation = require("../utilities/user_validation")
 let jwt = require("../utilities/jwt")
 
@@ -154,4 +155,53 @@ module.exports.login = function (req, res) {
             })
         }
     })
+}
+
+module.exports.addPost = (req, res) => {
+    User.findOne({ _id: req.params.user_id })
+        .exec(function (err, user) {
+            if (err) {
+                res.json({
+                    status: "We are having trouble getting that user!"
+                })
+            }
+            else {
+                let post = new Post();
+                post.caption = req.body.caption;
+                post.image = req.body.image;
+                post.comments_enabled = req.body.comments_enabled;
+                post.creator = user._id;
+
+                post.save(function (err) {
+                    if (err) {
+                        res.json({
+                            status: "Your post could not be added. It's our fault!"
+                        })
+                    }
+                    else {
+                        res.json({
+                            status: "Your post was created successfully!",
+                            data: post
+                        })
+                    }
+                })
+            }
+        })
+}
+
+module.exports.getUserPosts = (req, res) => {
+    Post.find({ creator: req.params.user_id })
+        .exec(function (err, posts) {
+            if (err) {
+                res.json({
+                    status: "We can't get this users posts right now!"
+                })
+            }
+            else {
+                res.json({
+                    status: "Success",
+                    data: posts
+                })
+            }
+        })
 }

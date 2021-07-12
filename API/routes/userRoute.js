@@ -20,4 +20,8 @@ router.route("/users/:user_id")
     .delete(userController.deleteSpecificUser)
     .put(userController.updateUser);
 
+router.route("/users/:user_id/posts")
+    .get(userController.getUserPosts)
+    .post(userController.addPost);
+
 module.exports = router;
