@@ -1,4 +1,5 @@
 let Post = require("../models/postModel");
+let Comment = require("../models/commentModel");
 
 module.exports.getAll = (req, res) => {
     let regex = new RegExp(req.query.search ? req.query.search : "", "i");
@@ -62,6 +63,56 @@ module.exports.deletePost = (req, res) => {
                 res.json({
                     status: "Post deleted!",
                     data: post
+                })
+            }
+        })
+}
+
+module.exports.addComment = (req, res) => {
+    Post.findOne({ _id: req.params.post_id })
+        .exec(function (err, post) {
+            if (err) {
+                res.json({
+                    status: "We are having trouble with this post!"
+                })
+            }
+            else {
+                let comment = new Comment();
+                comment.content = req.body.content;
+                comment.post = post._id;
+                comment.creator = req.body.creator;
+
+                comment.save(function (err) {
+                    if (err) {
+                        res.json({
+                            status: "Couldn't post this comment!"
+                        })
+                    }
+                    else {
+                        res.json({
+                            status: "Comment added",
+                            data: comment
+                        })
+                    }
+                })
+            }
+        })
+}
+
+module.exports.getPostComments = (req, res) => {
+    Comment.find({ post: req.params.post_id })
+        .populate("creator")
+        .sort({ created_at: -1 })
+        .exec(function (err, comments) {
+            if (err) {
+                res.json({
+                    status: "Can't get comments for this post!"
+                })
+            }
+            else {
+                res.json({
+                    status: "Success",
+                    data: comments
                 })
             }
         })

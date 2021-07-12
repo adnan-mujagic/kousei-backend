@@ -8,4 +8,8 @@ router.route("/posts/:post_id")
     .put(postController.updatePost)
     .delete(postController.deletePost);
 
+router.route("/posts/:post_id/comments")
+    .get(postController.getPostComments)
+    .post(postController.addComment);
+
 module.exports = router;
