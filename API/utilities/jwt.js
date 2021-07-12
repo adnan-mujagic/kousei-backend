@@ -9,7 +9,7 @@ class JWT {
     }
 
     static verify(token) {
-        return jwt.verify(token);
+        return jwt.verify(token, process.env.JWT_KEY);
     }
 }
 
