@@ -96,10 +96,11 @@ module.exports.addComment = (req, res) => {
                 })
             }
             else {
+                let auth_token = jwt.verify(req.headers.authentication)
                 let comment = new Comment();
                 comment.content = req.body.content;
                 comment.post = post._id;
-                comment.creator = req.body.creator;
+                comment.creator = auth_token.uid;
 
                 comment.save(function (err) {
                     if (err) {
