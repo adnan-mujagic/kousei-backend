@@ -20,6 +20,12 @@ let userSchema = new mongoose.Schema({
         type: String,
         default: "NORMAL"
     },
+    followers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ]
 })
 
 let User = mongoose.model("User", userSchema);

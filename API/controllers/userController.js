@@ -205,3 +205,112 @@ module.exports.getUserPosts = (req, res) => {
             }
         })
 }
+
+module.exports.follow = (req, res) => {
+    let auth_token = jwt.verify(req.headers.authentication);
+    if (auth_token.uid != req.params.user_id) {
+        User.findOne({ _id: req.params.user_id })
+            .exec(function (err, user) {
+                if (err) {
+                    res.json("We are having trouble finding the user.")
+                }
+                else {
+                    if (!user.followers.includes(auth_token.uid)) {
+                        user.followers.push(auth_token.uid);
+                        user.save(function (err) {
+                            if (err) {
+                                res.json({
+                                    status: "There was a problem while trying to follow a user"
+                                })
+                            }
+                            else {
+                                res.json({
+                                    status: "You are now following " + user.username,
+                                    data: user
+                                })
+                            }
+                        })
+                    }
+                    else {
+                        res.json({
+                            status: "You are already following this person!"
+                        })
+                    }
+                }
+            })
+
+    }
+    else {
+        res.json({
+            status: "You cannot follow yourself!"
+        })
+    }
+}
+
+module.exports.unfollow = (req, res) => {
+    let auth_token = jwt.verify(req.headers.authentication);
+    if (auth_token.uid != req.params.user_id) {
+        User.findOne({ _id: req.params.user_id })
+            .exec(function (err, user) {
+                if (err) {
+                    res.json({
+                        status: "Trouble finding the user"
+                    })
+                }
+                else {
+                    if (user.followers.includes(auth_token.uid)) {
+                        for (let i = 0; i < user.followers.length; i++) {
+                            if (user.followers[i] == auth_token.uid) {
+                                user.followers.splice(i, 1);
+                                i--;
+                            }
+                        }
+
+                        user.save(function (err) {
+                            if (err) {
+                                res.json({
+                                    status: "Can't unfollow right now"
+                                })
+                            }
+                            else {
+                                res.json({
+                                    status: "Success",
+                                    data: user
+                                })
+                            }
+                        })
+                    }
+                    else {
+                        res.json({
+                            status: "You cannot unfollow if you are not following beforehand."
+                        })
+                    }
+                }
+            })
+    }
+    else {
+        res.json({
+            status: "You cannot unfollow yourself!"
+        })
+    }
+
+}
+
+module.exports.seeFollowers = (req, res) => {
+    User.findOne({ _id: req.params.user_id })
+        .select('followers')
+        .populate('followers')
+        .exec(function (err, result) {
+            if (err) {
+                res.json({
+                    status: "Something went wrong!"
+                })
+            }
+            else {
+                res.json({
+                    status: "Success",
+                    data: result.followers
+                })
+            }
+        })
+}
