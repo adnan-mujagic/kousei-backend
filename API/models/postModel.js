@@ -14,7 +14,13 @@ let postSchema = mongoose.Schema({
     comments_enabled: {
         type: Boolean,
         default: true
-    }
+    },
+    likes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ]
 })
 
 let Post = mongoose.model("Post", postSchema);

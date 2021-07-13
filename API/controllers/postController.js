@@ -1,5 +1,6 @@
 let Post = require("../models/postModel");
 let Comment = require("../models/commentModel");
+let jwt = require("../utilities/jwt")
 
 module.exports.getAll = (req, res) => {
     let regex = new RegExp(req.query.search ? req.query.search : "", "i");
@@ -113,6 +114,95 @@ module.exports.getPostComments = (req, res) => {
                 res.json({
                     status: "Success",
                     data: comments
+                })
+            }
+        })
+}
+
+module.exports.likePost = (req, res) => {
+    let auth_token = jwt.verify(req.headers.authentication);
+    Post.findOne({ _id: req.params.post_id })
+        .exec(function (err, post) {
+            if (err) {
+                res.json({
+                    status: "Couldn't find that post!"
+                })
+            }
+            else {
+                if (post.likes.includes(auth_token.uid)) {
+                    res.json({
+                        status: "You already liked this post!"
+                    })
+                }
+                else {
+                    post.likes.push(auth_token.uid);
+                    post.save(function (err) {
+                        if (err) {
+                            res.json("We had trouble liking this post!");
+                        }
+                        else {
+                            res.json({
+                                status: "Post liked!",
+                                data: post
+                            })
+                        }
+                    })
+                }
+            }
+        })
+}
+
+module.exports.unlikePost = (req, res) => {
+    let auth_token = jwt.verify(req.headers.authentication);
+    Post.findOne({ _id: req.params.post_id })
+        .exec(function (err, post) {
+            if (err) {
+                res.json({
+                    status: "Couldn't get this post!"
+                })
+            }
+            else {
+                if (post.likes.includes(auth_token.uid)) {
+                    let i = post.likes.indexOf(auth_token.uid)
+                    post.likes.splice(i, 1);
+
+                    post.save(function (err) {
+                        if (err) {
+                            res.json({
+                                status: "Couldn't unlike this post!"
+                            })
+                        }
+                        else {
+                            res.json({
+                                status: "Post unliked",
+                                data: post
+                            })
+                        }
+                    })
+                }
+                else {
+                    res.json({
+                        status: "You don't like this post in the first place."
+                    })
+                }
+            }
+        })
+}
+
+module.exports.getPostLikes = (req, res) => {
+    Post.findOne({ _id: req.params.post_id })
+        .select("likes")
+        .populate("likes")
+        .exec(function (err, result) {
+            if (err) {
+                res.json({
+                    status: "We can't get this user's likes!"
+                })
+            }
+            else {
+                res.json({
+                    status: "Success!",
+                    data: result.likes
                 })
             }
         })
