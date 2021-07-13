@@ -22,6 +22,24 @@ module.exports.getAll = (req, res) => {
         })
 }
 
+module.exports.getSpecificPost = (req, res) => {
+    Post.findOne({_id: req.params.post_id})
+        .populate("creator")
+        .exec(function(err, post){
+            if(err){
+                res.json({
+                    status:"Can't get this post!"
+                })
+            }
+            else{
+                res.json({
+                    status:"Success",
+                    data:post
+                })
+            }
+        })
+}
+
 module.exports.updatePost = (req, res) => {
     Post.findOne({ _id: req.params.post_id })
         .exec(function (err, post) {
