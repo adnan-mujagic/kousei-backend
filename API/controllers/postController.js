@@ -1,11 +1,17 @@
 let Post = require("../models/postModel");
 let Comment = require("../models/commentModel");
 let jwt = require("../utilities/jwt")
+let compareLikes = require("../utilities/compareLikes")
 
 module.exports.getAll = (req, res) => {
     let regex = req.query.search ? req.query.search : "";
+    let sortBy = null;
+    if(!req.query.order){
+        sortBy = {created_at:-1}
+    }
+   
     Post.find()
-        .sort({ created_at: -1 })
+        .sort(sortBy)
         .populate("creator")
         .exec(function (err, posts) {
             
@@ -18,9 +24,17 @@ module.exports.getAll = (req, res) => {
                 for(let i = 0; i< posts.length; i++){
                     
                     if(!posts[i].caption.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.username.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.full_name.toLowerCase().includes(regex.toLowerCase())){
-                        
                         posts.splice(i,1);
                         i--;
+                    }
+                    console.log(req.query.order=="likes");
+                    if(req.query.order=="likes"){
+                        try{
+                            posts.sort(compareLikes)
+                        }catch(err){
+                            console.log(err.message)
+                        }
+                        
                     }
                 }
                 res.json({
