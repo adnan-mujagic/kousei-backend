@@ -158,7 +158,9 @@ module.exports.login = function (req, res) {
 }
 
 module.exports.addPost = (req, res) => {
-    User.findOne({ _id: req.params.user_id })
+    let auth_token = jwt.verify(req.headers.authentication, process.env.JWT_KEY);
+    if(auth_token.uid == req.params.user_id){
+        User.findOne({ _id: req.params.user_id })
         .exec(function (err, user) {
             if (err) {
                 res.json({
@@ -187,6 +189,13 @@ module.exports.addPost = (req, res) => {
                 })
             }
         })
+    }
+    else{
+        res.json({
+            status:"You can't add posts for this user!"
+        })
+    }
+    
 }
 
 module.exports.getUserPosts = (req, res) => {

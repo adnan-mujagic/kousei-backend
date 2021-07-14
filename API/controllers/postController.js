@@ -3,17 +3,26 @@ let Comment = require("../models/commentModel");
 let jwt = require("../utilities/jwt")
 
 module.exports.getAll = (req, res) => {
-    let regex = new RegExp(req.query.search ? req.query.search : "", "i");
-    Post.find({ caption: regex })
+    let regex = req.query.search ? req.query.search : "";
+    Post.find()
         .sort({ created_at: -1 })
         .populate("creator")
         .exec(function (err, posts) {
+            
             if (err) {
                 res.json({
                     status: "We are having trouble getting posts right now!"
                 })
             }
             else {
+                for(let i = 0; i< posts.length; i++){
+                    
+                    if(!posts[i].caption.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.username.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.full_name.toLowerCase().includes(regex.toLowerCase())){
+                        
+                        posts.splice(i,1);
+                        i--;
+                    }
+                }
                 res.json({
                     status: "Success",
                     data: posts
