@@ -2,6 +2,7 @@ let Post = require("../models/postModel");
 let Comment = require("../models/commentModel");
 let jwt = require("../utilities/jwt")
 let compareLikes = require("../utilities/compareLikes")
+let comparePopularity = require("../utilities/comparePopularity")
 
 module.exports.getAll = (req, res) => {
     let regex = req.query.search ? req.query.search : "";
@@ -22,21 +23,27 @@ module.exports.getAll = (req, res) => {
             }
             else {
                 for(let i = 0; i< posts.length; i++){
-                    
                     if(!posts[i].caption.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.username.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.full_name.toLowerCase().includes(regex.toLowerCase())){
                         posts.splice(i,1);
                         i--;
                     }
-                    console.log(req.query.order=="likes");
-                    if(req.query.order=="likes"){
-                        try{
-                            posts.sort(compareLikes)
-                        }catch(err){
-                            console.log(err.message)
-                        }
-                        
+                }
+                if(req.query.order=="likes"){
+                    try{
+                        posts.sort(compareLikes)
+                    }catch(err){
+                        console.log(err.message)
+                    }
+                    
+                }
+                else if(req.query.order=="popularity"){
+                    try{
+                        posts.sort(comparePopularity);
+                    }catch(err){
+                        console.log(err.message);
                     }
                 }
+                
                 res.json({
                     status: "Success",
                     data: posts
