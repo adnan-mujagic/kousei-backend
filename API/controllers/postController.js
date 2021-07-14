@@ -7,7 +7,7 @@ let comparePopularity = require("../utilities/comparePopularity")
 module.exports.getAll = (req, res) => {
     let regex = req.query.search ? req.query.search : "";
     let sortBy = null;
-    if(!req.query.order){
+    if(req.query.order=="normal"){
         sortBy = {created_at:-1}
     }
    
