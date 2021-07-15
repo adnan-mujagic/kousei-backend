@@ -2,6 +2,8 @@ let User = require("../models/userModel")
 let Post = require("../models/postModel")
 let UserValidation = require("../utilities/user_validation")
 let jwt = require("../utilities/jwt")
+let compareLikes = require("../utilities/compareLikes")
+let comparePopularity = require("../utilities/comparePopularity")
 
 
 
@@ -199,7 +201,14 @@ module.exports.addPost = (req, res) => {
 }
 
 module.exports.getUserPosts = (req, res) => {
+    let sortBy = null;
+    if(req.query.order=="normal"){
+        sortBy={
+            created_at: -1
+        }
+    }
     Post.find({ creator: req.params.user_id })
+        .sort(sortBy)
         .exec(function (err, posts) {
             if (err) {
                 res.json({
@@ -207,6 +216,12 @@ module.exports.getUserPosts = (req, res) => {
                 })
             }
             else {
+                if(req.query.order=="likes"){
+                    posts.sort(compareLikes);
+                }
+                else if(req.query.order=="popularity"){
+                    posts.sort(comparePopularity);
+                }
                 res.json({
                     status: "Success",
                     data: posts
