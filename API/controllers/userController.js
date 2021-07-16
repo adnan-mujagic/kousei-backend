@@ -48,7 +48,9 @@ module.exports.register = (req, res) => {
 
 module.exports.getUsers = (req, res) => {
     let regex = new RegExp(req.query.search ? req.query.search : "", "i");
-    User.find({ username: regex }).exec(function (err, users) {
+    User.find({ username: regex })
+        .populate("following followers")
+        .exec(function (err, users) {
         if (err) {
             res.json({
                 status: "Something went wrong!"
@@ -64,7 +66,9 @@ module.exports.getUsers = (req, res) => {
 }
 
 module.exports.getSpecificUser = (req, res) => {
-    User.findOne({ _id: req.params.user_id }).exec(function (err, user) {
+    User.findOne({ _id: req.params.user_id })
+    .populate("followers following")
+    .exec(function (err, user) {
         if (err) {
             res.json({
                 status: "There was a problem getting this user!"
