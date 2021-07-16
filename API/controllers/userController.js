@@ -2,15 +2,17 @@ let User = require("../models/userModel")
 let Post = require("../models/postModel")
 let UserValidation = require("../utilities/user_validation")
 let jwt = require("../utilities/jwt")
+let CryptoJS = require("crypto-js")
 let compareLikes = require("../utilities/compareLikes")
 let comparePopularity = require("../utilities/comparePopularity")
+
 
 
 
 module.exports.register = (req, res) => {
     let user = new User();
     user.username = req.body.username;
-    user.password = req.body.password;
+    user.password = CryptoJS.MD5(req.body.password);
     user.full_name = req.body.full_name;
     user.phone_number = req.body.phone_number;
     user.email = req.body.email;
@@ -138,7 +140,7 @@ module.exports.login = function (req, res) {
             });
         }
         else if (user != null) {
-            if (user.password == req.body.password) {
+            if (user.password == CryptoJS.MD5(req.body.password)) {
                 var user_token = jwt.sign(user);
                 res.json({
                     status: "Successfully logged in!",
@@ -233,6 +235,27 @@ module.exports.getUserPosts = (req, res) => {
 module.exports.follow = (req, res) => {
     let auth_token = jwt.verify(req.headers.authentication);
     if (auth_token.uid != req.params.user_id) {
+        User.findOne({_id: auth_token.uid})
+            .exec(function(err, user){
+                if(err){
+                    res.json({
+                        status:"Couldn't add this user to your followers!"
+                    })
+                }
+                else{
+                    if(!user.following.includes(req.params.user_id)){
+                        user.following.push(req.params.user_id);
+
+                        user.save(function(err){
+                            if(err){
+                                res.json({
+                                    status:"Couldn't add this user to your followers!"
+                                })
+                            }
+                        })
+                    }
+                }
+            })
         User.findOne({ _id: req.params.user_id })
             .exec(function (err, user) {
                 if (err) {
