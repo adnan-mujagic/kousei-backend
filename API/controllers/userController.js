@@ -326,9 +326,6 @@ module.exports.unfollow = (req, res) => {
                             else{
                                 
                                 for(let i = 0; i < currentUser.following.length; i++){
-                                    console.log("this was true")
-                                    console.log(currentUser.following[i]);
-                                    console.log(user._id);
                                     if(String(currentUser.following[i]) == String(user._id)){
                                         currentUser.following.splice(i, 1);
                                         i--;
