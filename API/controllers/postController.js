@@ -1,5 +1,6 @@
 let Post = require("../models/postModel");
 let Comment = require("../models/commentModel");
+let User = require("../models/userModel");
 let jwt = require("../utilities/jwt")
 let compareLikes = require("../utilities/compareLikes")
 let comparePopularity = require("../utilities/comparePopularity")
@@ -10,47 +11,70 @@ module.exports.getAll = (req, res) => {
     if(req.query.order=="normal"){
         sortBy = {created_at:-1}
     }
-   
-    Post.find()
-        .sort(sortBy)
-        .populate("creator")
-        .exec(function (err, posts) {
-            
-            if (err) {
+    const decoded = jwt.verify(req.headers.authentication);
+    User.findOne({_id:decoded.uid})
+        .exec(function(err, user){
+            if(err){
                 res.json({
-                    status: "We are having trouble getting posts right now!"
+                    status:"Couldn't find user"
                 })
             }
-            else {
-                for(let i = 0; i< posts.length; i++){
-                    if(!posts[i].caption.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.username.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.full_name.toLowerCase().includes(regex.toLowerCase())){
-                        posts.splice(i,1);
-                        i--;
-                    }
-                }
-                if(req.query.order=="likes"){
-                    try{
-                        posts.sort(compareLikes)
-                    }catch(err){
-                        console.log(err.message)
-                    }
+            else{
+                Post.find()
+                    .sort(sortBy)
+                    .populate("creator")
+                    .exec(function (err, posts) {
                     
-                }
-                else if(req.query.order=="popularity"){
-                    try{
-                        posts.sort(comparePopularity);
-                    }catch(err){
-                        console.log(err.message);
-                    }
-                }
-                
-                res.json({
-                    status: "Success",
-                    data: posts
-                })
+                        if (err) {
+                            res.json({
+                               status: "We are having trouble getting posts right now!"
+                            })
+                        }
+                        else {
+                            for(let i = 0; i< posts.length; i++){
+                                if(!posts[i].caption.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.username.toLowerCase().includes(regex.toLowerCase()) && !posts[i].creator.full_name.toLowerCase().includes(regex.toLowerCase())){
+                                    posts.splice(i,1);
+                                    i--;
+                                }
+                            }
+                            if(req.query.order=="likes"){
+                                try{
+                                    posts.sort(compareLikes)
+                                }catch(err){
+                                    console.log(err.message)
+                                }
+                                
+                            }
+                            else if(req.query.order=="popularity"){
+                                try{
+                                    posts.sort(comparePopularity);
+                                }catch(err){
+                                    console.log(err.message);
+                                }
+                            }
+                            else if(req.query.filter=="followed"){
+                                for(let i = 0; i<posts.length; i++){
+                                    if(!user.following.includes(posts[i].creator._id)){
+                                        posts.splice(i,1);
+                                        i--;
+                                        
+                                    }
+                                } 
+                                
+                            }
+                            res.json({
+                                status: "Success",
+                                data: posts
+                            })
+                        }
+                    })
             }
+
         })
-}
+    }  
+    
+   
+
 
 module.exports.getSpecificPost = (req, res) => {
     Post.findOne({_id: req.params.post_id})
