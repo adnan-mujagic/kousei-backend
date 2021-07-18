@@ -54,7 +54,7 @@ module.exports.getAll = (req, res) => {
                             }
                             if(req.query.filter=="followed"){
                                 for(let i = 0; i<posts.length; i++){
-                                    if(!user.following.includes(posts[i].creator._id)){
+                                    if(!user.following.includes(posts[i].creator._id) && posts[i].creator._id!=decoded.uid){
                                         posts.splice(i,1);
                                         i--;
                                     }
