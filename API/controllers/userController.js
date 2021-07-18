@@ -317,6 +317,35 @@ module.exports.unfollow = (req, res) => {
                             }
                         }
 
+                        User.findOne({_id:auth_token.uid}).exec(function(err, currentUser){
+                            if(err){
+                                res.json({
+                                    status:"Error finding you!",
+                                })
+                            }
+                            else{
+                                
+                                for(let i = 0; i < currentUser.following.length; i++){
+                                    console.log("this was true")
+                                    console.log(currentUser.following[i]);
+                                    console.log(user._id);
+                                    if(String(currentUser.following[i]) == String(user._id)){
+                                        currentUser.following.splice(i, 1);
+                                        i--;
+                                        break;
+                                    }
+                                }
+                                console.log(currentUser.following);
+                                currentUser.save(function(err){
+                                    if(err){
+                                        res.json({
+                                            status:"Error!"
+                                        })
+                                    }
+                                })
+                            }
+                        })
+
                         user.save(function (err) {
                             if (err) {
                                 res.json({
