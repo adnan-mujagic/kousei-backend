@@ -52,12 +52,11 @@ module.exports.getAll = (req, res) => {
                                     console.log(err.message);
                                 }
                             }
-                            else if(req.query.filter=="followed"){
+                            if(req.query.filter=="followed"){
                                 for(let i = 0; i<posts.length; i++){
                                     if(!user.following.includes(posts[i].creator._id)){
                                         posts.splice(i,1);
                                         i--;
-                                        
                                     }
                                 } 
                                 
