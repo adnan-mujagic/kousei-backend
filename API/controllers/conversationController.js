@@ -79,6 +79,7 @@ module.exports.getConversationMessages = (req, res) => {
             else{
                 if(convo.participants.includes(decoded.uid)){
                     Message.find({conversation: req.params.conversation_id})
+                        .populate("sender")
                         .exec(function(err, messages){
                             if(err){
                                 res.json({
