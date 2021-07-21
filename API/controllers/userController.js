@@ -6,9 +6,6 @@ let CryptoJS = require("crypto-js")
 let compareLikes = require("../utilities/compareLikes")
 let comparePopularity = require("../utilities/comparePopularity")
 
-
-
-
 module.exports.register = (req, res) => {
     let user = new User();
     user.username = req.body.username;
