@@ -31,7 +31,13 @@ let userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }
-    ]
+    ],
+    coordinates: {
+        longitude: Number,
+        latitude: Number,
+        updated: Number
+    }
+
 })
 
 let User = mongoose.model("User", userSchema);
