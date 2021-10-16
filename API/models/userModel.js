@@ -35,7 +35,10 @@ let userSchema = new mongoose.Schema({
     coordinates: {
         longitude: Number,
         latitude: Number,
-        updated: Number
+        updated: {
+            type: Date,
+            default: Date.now
+        }
     }
 
 })

@@ -105,29 +105,45 @@ module.exports.updateUser = (req, res) => {
             })
         }
         else {
-
-            user.full_name = req.body.full_name ? req.body.full_name : user.full_name;
-            user.username = req.body.username ? req.body.username : user.username;
-            user.password = req.body.password ? req.body.password : user.password;
-            user.email = req.body.email ? req.body.email : user.email;
-            user.profile_picture = req.body.profile_picture ? req.body.profile_picture : user.profile_picture;
-            user.phone_number = req.body.phone_number ? req.body.phone_number : user.phone_number;
-            user.age = req.body.age ? req.body.age : user.age;
-            user.bio = req.body.bio ? req.body.bio : user.bio;
-
-            user.save(function (err) {
-                if (err) {
+            try {
+                let decoded = jwt.verify(req.headers.authentication);
+                if(decoded.uid == user._id){
+                    user.full_name = req.body.full_name ? req.body.full_name : user.full_name;
+                    user.username = req.body.username ? req.body.username : user.username;
+                    user.password = req.body.password ? req.body.password : user.password;
+                    user.email = req.body.email ? req.body.email : user.email;
+                    user.profile_picture = req.body.profile_picture ? req.body.profile_picture : user.profile_picture;
+                    user.phone_number = req.body.phone_number ? req.body.phone_number : user.phone_number;
+                    user.age = req.body.age ? req.body.age : user.age;
+                    user.bio = req.body.bio ? req.body.bio : user.bio;
+                    user.coordinates = req.body.coordinates ? req.body.coordinates : user.coordinates
+    
+                    user.save(function (err) {
+                        if (err) {
+                            res.json({
+                                status: "Couldn't update that user!"
+                            })
+                        }
+                        else {
+                            res.json({
+                                status: "User updated successfully",
+                                data: user
+                            })
+                        }
+                    })
+                } 
+                else{
                     res.json({
-                        status: "Couldn't update that user!"
+                        status:"You have no authentication to make changes to this user!"
                     })
                 }
-                else {
-                    res.json({
-                        status: "User updated successfully",
-                        data: user
-                    })
-                }
-            })
+            } catch (error) {
+                res.json({
+                    status: error.message
+                })
+            }
+            
+            
 
         }
     })
