@@ -36,8 +36,11 @@ let userSchema = new mongoose.Schema({
         longitude: Number,
         latitude: Number,
         updated: Date
+    },
+    shown_on_map:{
+        type: Boolean,
+        default: false
     }
-
 })
 
 let User = mongoose.model("User", userSchema);
