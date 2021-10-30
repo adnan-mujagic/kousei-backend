@@ -117,7 +117,7 @@ module.exports.updateUser = (req, res) => {
                     user.age = req.body.age ? req.body.age : user.age;
                     user.bio = req.body.bio ? req.body.bio : user.bio;
                     user.coordinates = req.body.coordinates ? req.body.coordinates : user.coordinates;
-                    user.shown_on_map = req.body.shown_on_map ? req.body.shown_on_map : user.shown_on.map;
+                    user.shown_on_map = req.body.shown_on_map!=null ? req.body.shown_on_map : user.shown_on.map;
 
                     user.save(function (err) {
                         if (err) {
