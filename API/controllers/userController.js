@@ -118,6 +118,7 @@ module.exports.updateUser = (req, res) => {
                     user.bio = req.body.bio ? req.body.bio : user.bio;
                     user.coordinates = req.body.coordinates ? req.body.coordinates : user.coordinates;
                     user.shown_on_map = req.body.shown_on_map!=null ? req.body.shown_on_map : user.shown_on_map;
+                    user.interests = req.body.interests ? req.body.interests : user.interests;
 
                     user.save(function (err) {
                         if (err) {
@@ -401,6 +402,23 @@ module.exports.seeFollowers = (req, res) => {
                 res.json({
                     status: "Success",
                     data: result.followers
+                })
+            }
+        })
+}
+
+module.exports.getUserInterests = (req, res) => {
+    User.findOne({_id: req.params.user_id}).select("interests -_id").populate("interests")
+        .exec(function(err, interests){
+            if(err){
+                res.json({
+                    status:"Couldn't find this user's interests!"
+                })
+            }
+            else{
+                res.json({
+                    status:"User interests fetched!",
+                    data: interests
                 })
             }
         })

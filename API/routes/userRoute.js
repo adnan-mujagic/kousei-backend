@@ -31,4 +31,7 @@ router.route("/users/:user_id/posts")
     .get(userController.getUserPosts)
     .post(userController.addPost);
 
+router.route("/users/:user_id/interests")
+    .get(userController.getUserInterests);
+
 module.exports = router;

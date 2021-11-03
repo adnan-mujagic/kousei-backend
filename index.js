@@ -9,7 +9,7 @@ require("dotenv").config();
 let userRoute = require("./API/routes/userRoute.js")
 let postRoute = require("./API/routes/postRoute")
 let commentRoute = require("./API/routes/commentRoute")
-let conversationRoute = require("./API/routes/conversationRoute")
+let interestRoute = require("./API/routes/interestRoute")
 
 const app = express();
 
@@ -29,7 +29,7 @@ app.use(express.json())
 app.use("/api", userRoute)
 app.use("/api", postRoute)
 app.use("/api", commentRoute)
-app.use("/api", conversationRoute)
+app.use("/api", interestRoute)
 
 const mongo = mongoose.connect(process.env.DB_PATH, config.DB_OPTIONS);
 

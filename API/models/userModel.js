@@ -40,7 +40,13 @@ let userSchema = new mongoose.Schema({
     shown_on_map:{
         type: Boolean,
         default: false
-    }
+    },
+    interests: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Interest"
+        }
+    ]
 })
 
 let User = mongoose.model("User", userSchema);
