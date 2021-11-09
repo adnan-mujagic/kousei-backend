@@ -119,6 +119,7 @@ module.exports.updateUser = (req, res) => {
                     user.coordinates = req.body.coordinates ? req.body.coordinates : user.coordinates;
                     user.shown_on_map = req.body.shown_on_map!=null ? req.body.shown_on_map : user.shown_on_map;
                     user.interests = req.body.interests ? req.body.interests : user.interests;
+                    user.distance_importance = req.body.distance_importance ? req.body.distance_importance : user.distance_importance;
 
                     user.save(function (err) {
                         if (err) {

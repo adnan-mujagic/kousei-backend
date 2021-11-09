@@ -46,7 +46,11 @@ let userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Interest"
         }
-    ]
+    ],
+    distance_importance: {
+        type: Number,
+        default: 0.5
+    }
 })
 
 let User = mongoose.model("User", userSchema);
